@@ -7,7 +7,7 @@ const regd_users = express.Router();
 let users = [];
 
 const isValid = (username)=>{ //returns boolean
-  let userswithsamename = users.filter(user => user.username !== username);
+  const userswithsamename = users.filter(user => user.username !== username);
   if (userswithsamename.length > 0) {
     return false; // username already exists
   }
@@ -17,7 +17,7 @@ const isValid = (username)=>{ //returns boolean
 }
 
 const authenticatedUser = (username,password)=>{ //returns boolean
-  let validuser = users.filter(user => (user.username === username && user.password === password));
+  const validuser = users.filter(user => (user.username === username && user.password === password));
   if (validuser.length > 0) {
     return true; // user is authenticated
   }
@@ -28,16 +28,16 @@ const authenticatedUser = (username,password)=>{ //returns boolean
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
-  let username = req.body.username;
-  let password = req.body.password;
+  const username = req.body.username;
+  const password = req.body.password;
 
   if (!username || !password) {
-    return res.status(404).json({message: "Unable to login. Please provide username and password."});
+    return res.status(400).json({message: "Unable to login. Please provide username and password."});
   }
 
   if (authenticatedUser(username, password)) {
     // Generate an access token
-    let accessToken = jwt.sign({data: password}, 'access', {expiresIn: 60*60}); // token valid for 1 hour
+    const accessToken = jwt.sign({data: password}, 'access', {expiresIn: 60*60}); // token valid for 1 hour
     req.session.authorization = {accessToken, username}; // store token in session
     return res.status(200).json({message: "User successfully logged in"});
   }
@@ -48,8 +48,20 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbn = req.params.isbn;
+  const book = books[isbn];
+
+  if (book){
+    const review = req.body.reviews; // get the review from request body
+
+    if (review) {
+      book["reviews"] = review; // add or update the review for the book
+      return res.status(200).json({message: "Review added successfully"});
+    }
+  }
+  else {
+    return res.status(404).jason({message: "Book not found"});
+  }
 });
 
 module.exports.authenticated = regd_users;
