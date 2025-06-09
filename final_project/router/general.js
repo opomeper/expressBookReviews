@@ -4,7 +4,7 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-
+// Register a new user
 public_users.post("/register", (req,res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -19,7 +19,7 @@ public_users.post("/register", (req,res) => {
     }
   }
   else {
-    return res.status(404).json({message: "Unable to register user. Please provide username and password."});
+    return res.status(400).json({message: "Unable to register user. Please provide username and password."});
   }
 });
 
