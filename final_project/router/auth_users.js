@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
-const { use } = require('react');
+// const { use } = require('react');
 const regd_users = express.Router();
 
 let users = [];
@@ -61,6 +61,20 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   }
   else {
     return res.status(404).jason({message: "Book not found"});
+  }
+});
+
+// Delete a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn;
+  const book = books[isbn];
+
+  if (book && book["reviews"]) {
+    delete book["reviews"]; // delete the review for the book
+    return res.status(200).json({message: "Review deleted successfully"});
+  }
+  else {
+    return res.status(404).json({message: "Book or review not found"});
   }
 });
 
