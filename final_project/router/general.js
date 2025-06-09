@@ -25,27 +25,52 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  res.send(JSON.stringify(books, null,4));
+  const bookList = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(books);
+    }, 3000);
+  });
+
+  bookList.then(data => res.status(200).json({message: "Book list fetch after delay", BookList: data}));
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbn = req.params.isbn;
-  res.send(JSON.stringify(books[isbn], null,4));
+  const book = books[isbn];
+  const isbnBook = new Promise((resolve, reject) => {
+    setTimeout(() => {
+    resolve(book);
+    }, 3000);
+  });
+
+  isbnBook.then(data => res.status(200).json({message: "Book fetch after delay", Book: data}));
 });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   const author = req.params.author;
-  let filteredAuthor = Object.valueus(books).filter(book => book.author === author);
-  res.send(JSON.stringify(filteredAuthor, null, 4));
+  const filteredAuthor = Object.values(books).filter(book => book.author === author);
+  const authorBook = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(filteredAuthor);
+    }, 3000);
+  });
+
+  authorBook.then(data => res.status(200).json({message: "Book by author fetch after delay", Book: data}));
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   const title = req.params.title;
-  let filteredTitle = Object.values(books).filter(book => book.title === tile);
-  res.send(JSON.stringify(filteredTitle, null, 4)); 
+  const filteredTitle = Object.values(books).filter(book => book.title === title);
+  const titleBook = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(filteredTitle);
+    }, 3000);
+  });
+
+  titleBook.then(data => res.status(200).json({message: "Book by title fetch after delay", Book: data}));
 });
 
 //  Get book review
